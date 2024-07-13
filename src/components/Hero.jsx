@@ -1,6 +1,6 @@
 const Hero = ({
   title = 'MR KIKSY JOB LISTINGS',
-  subtitle = 'Find the RIGHT job that fits your skill set  This  Website was built by Mr Kiksy (+447591683924 or +2347077513836)
+  subtitle = 'Find the RIGHT job that fits your skill set  This  Website was built by Mr Kiksy +447591683924 or +2347077513836'
 }) => {
   return (
     <section className='bg-indigo-700 py-20 mb-4'>
