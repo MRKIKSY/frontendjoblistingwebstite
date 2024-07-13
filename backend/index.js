@@ -11,10 +11,11 @@ const Job = require('./models/Job'); // Import the Job model
 const app = express();
 app.use(bodyParser.json());
 app.use(cors({
-  origin: process.env.CORS_ORIGINS.split(','),
+  origin: ["https://frontendjoblistingwebstite.onrender.com", "https://backendjoblistingwebsite.onrender.com"],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
+
 app.use(helmet());
 app.use(morgan('combined'));
 
