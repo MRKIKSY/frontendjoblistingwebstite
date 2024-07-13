@@ -17,7 +17,7 @@ const JobPage = () => {
     if (!confirm) return;
 
     try {
-      await axios.delete(`http://localhost:8000/api/jobs/${jobId}`);
+      await axios.delete(`https://backendjoblistingwebsite.onrender.com/api/jobs/${jobId}`);
       toast.success('Job deleted successfully');
       navigate('/jobs');
     } catch (error) {
@@ -100,7 +100,7 @@ const JobPage = () => {
 
 const jobLoader = async ({ params }) => {
   console.log('Fetching job with ID:', params.id);
-  const res = await axios.get(`http://localhost:8000/api/jobs/${params.id}`);
+  const res = await axios.get(`https://backendjoblistingwebsite.onrender.com/api/jobs/${params.id}`);
   return res.data;
 };
 

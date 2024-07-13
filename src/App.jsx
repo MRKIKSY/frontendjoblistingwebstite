@@ -17,7 +17,7 @@ const App = () => {
   // Add New Job
   const addJob = async (newJob) => {
     try {
-      await axios.post('http://localhost:8000/api/jobs', newJob);
+      await axios.post('https://backendjoblistingwebsite.onrender.com/api/jobs', newJob);
     } catch (error) {
       console.error('Error adding job:', error);
     }
@@ -26,7 +26,7 @@ const App = () => {
   // Delete Job
   const deleteJob = async (id) => {
     try {
-      await axios.delete(`http://localhost:8000/api/jobs/${id}`);
+      await axios.delete(`https://backendjoblistingwebsite.onrender.com/api/jobs/${id}`);
     } catch (error) {
       console.error('Error deleting job:', error);
     }
@@ -35,7 +35,7 @@ const App = () => {
   // Update Job
   const updateJob = async (job) => {
     try {
-      await axios.put(`http://localhost:8000/api/jobs/${job._id}`, job);
+      await axios.put(`https://backendjoblistingwebsite.onrender.com/api/jobs/${job._id}`, job);
     } catch (error) {
       console.error('Error updating job:', error);
       throw error;  // Ensure the error is propagated
