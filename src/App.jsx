@@ -4,6 +4,7 @@ import {
   createRoutesFromElements,
   RouterProvider,
 } from 'react-router-dom';
+import axios from 'axios';
 import MainLayout from './layouts/MainLayout';
 import HomePage from './pages/HomePage';
 import JobsPage from './pages/JobsPage';
@@ -15,34 +16,30 @@ import EditJobPage from './pages/EditJobPage';
 const App = () => {
   // Add New Job
   const addJob = async (newJob) => {
-    const res = await fetch('/api/jobs', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(newJob),
-    });
-    return;
+    try {
+      await axios.post('http://localhost:8000/api/jobs', newJob);
+    } catch (error) {
+      console.error('Error adding job:', error);
+    }
   };
 
   // Delete Job
   const deleteJob = async (id) => {
-    const res = await fetch(`/api/jobs/${id}`, {
-      method: 'DELETE',
-    });
-    return;
+    try {
+      await axios.delete(`http://localhost:8000/api/jobs/${id}`);
+    } catch (error) {
+      console.error('Error deleting job:', error);
+    }
   };
 
   // Update Job
   const updateJob = async (job) => {
-    const res = await fetch(`/api/jobs/${job.id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(job),
-    });
-    return;
+    try {
+      await axios.put(`http://localhost:8000/api/jobs/${job._id}`, job);
+    } catch (error) {
+      console.error('Error updating job:', error);
+      throw error;  // Ensure the error is propagated
+    }
   };
 
   const router = createBrowserRouter(
@@ -68,4 +65,5 @@ const App = () => {
 
   return <RouterProvider router={router} />;
 };
+
 export default App;

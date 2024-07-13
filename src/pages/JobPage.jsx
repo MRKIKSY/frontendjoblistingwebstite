@@ -2,24 +2,28 @@ import { useParams, useLoaderData, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaMapMarker } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
-const JobPage = ({ deleteJob }) => {
+const JobPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  console.log('Job ID:', id); // Check if this logs the correct job ID
+  
   const job = useLoaderData();
 
-  const onDeleteClick = (jobId) => {
-    const confirm = window.confirm(
-      'Are you sure you want to delete this listing?'
-    );
+  const onDeleteClick = async (jobId) => {
+    const confirm = window.confirm('Are you sure you want to delete this listing?');
 
     if (!confirm) return;
 
-    deleteJob(jobId);
-
-    toast.success('Job deleted successfully');
-
-    navigate('/jobs');
+    try {
+      await axios.delete(`http://localhost:8000/api/jobs/${jobId}`);
+      toast.success('Job deleted successfully');
+      navigate('/jobs');
+    } catch (error) {
+      toast.error('Error deleting job');
+      console.error(error);
+    }
   };
 
   return (
@@ -49,55 +53,38 @@ const JobPage = ({ deleteJob }) => {
               </div>
 
               <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
-                <h3 className='text-indigo-800 text-lg font-bold mb-6'>
-                  Job Description
-                </h3>
-
+                <h3 className='text-indigo-800 text-lg font-bold mb-6'>Job Description</h3>
                 <p className='mb-4'>{job.description}</p>
 
-                <h3 className='text-indigo-800 text-lg font-bold mb-2'>
-                  Salary
-                </h3>
-
+                <h3 className='text-indigo-800 text-lg font-bold mb-2'>Salary</h3>
                 <p className='mb-4'>{job.salary} / Year</p>
               </div>
             </main>
 
-            {/* <!-- Sidebar --> */}
             <aside>
               <div className='bg-white p-6 rounded-lg shadow-md'>
                 <h3 className='text-xl font-bold mb-6'>Company Info</h3>
-
                 <h2 className='text-2xl'>{job.company.name}</h2>
-
                 <p className='my-2'>{job.company.description}</p>
-
                 <hr className='my-4' />
 
                 <h3 className='text-xl'>Contact Email:</h3>
-
-                <p className='my-2 bg-indigo-100 p-2 font-bold'>
-                  {job.company.contactEmail}
-                </p>
+                <p className='my-2 bg-indigo-100 p-2 font-bold'>{job.company.contactEmail}</p>
 
                 <h3 className='text-xl'>Contact Phone:</h3>
-
-                <p className='my-2 bg-indigo-100 p-2 font-bold'>
-                  {' '}
-                  {job.company.contactPhone}
-                </p>
+                <p className='my-2 bg-indigo-100 p-2 font-bold'>{job.company.contactPhone}</p>
               </div>
 
               <div className='bg-white p-6 rounded-lg shadow-md mt-6'>
                 <h3 className='text-xl font-bold mb-6'>Manage Job</h3>
                 <Link
-                  to={`/edit-job/${job.id}`}
+                  to={`/edit-job/${job._id}`}
                   className='bg-indigo-500 hover:bg-indigo-600 text-white text-center font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block'
                 >
                   Edit Job
                 </Link>
                 <button
-                  onClick={() => onDeleteClick(job.id)}
+                  onClick={() => onDeleteClick(job._id)}
                   className='bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4 block'
                 >
                   Delete Job
@@ -112,9 +99,9 @@ const JobPage = ({ deleteJob }) => {
 };
 
 const jobLoader = async ({ params }) => {
-  const res = await fetch(`/api/jobs/${params.id}`);
-  const data = await res.json();
-  return data;
+  console.log('Fetching job with ID:', params.id);
+  const res = await axios.get(`http://localhost:8000/api/jobs/${params.id}`);
+  return res.data;
 };
 
 export { JobPage as default, jobLoader };

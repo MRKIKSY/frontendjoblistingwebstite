@@ -10,20 +10,18 @@ const EditJobPage = ({ updateJobSubmit }) => {
   const [description, setDescription] = useState(job.description);
   const [salary, setSalary] = useState(job.salary);
   const [companyName, setCompanyName] = useState(job.company.name);
-  const [companyDescription, setCompanyDescription] = useState(
-    job.company.description
-  );
+  const [companyDescription, setCompanyDescription] = useState(job.company.description);
   const [contactEmail, setContactEmail] = useState(job.company.contactEmail);
   const [contactPhone, setContactPhone] = useState(job.company.contactPhone);
 
   const navigate = useNavigate();
   const { id } = useParams();
 
-  const submitForm = (e) => {
+  const submitForm = async (e) => {
     e.preventDefault();
 
     const updatedJob = {
-      id,
+      _id: id,  // Ensure the ID is being sent correctly
       title,
       type,
       location,
@@ -37,11 +35,13 @@ const EditJobPage = ({ updateJobSubmit }) => {
       },
     };
 
-    updateJobSubmit(updatedJob);
-
-    toast.success('Job Updated Successfully');
-
-    return navigate(`/jobs/${id}`);
+    try {
+      await updateJobSubmit(updatedJob);
+      toast.success('Job Updated Successfully');
+      navigate(`/jobs/${id}`);
+    } catch (error) {
+      toast.error('Error updating job');
+    }
   };
 
   return (
@@ -54,10 +54,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
             </h2>
 
             <div className='mb-4'>
-              <label
-                htmlFor='type'
-                className='block text-gray-700 font-bold mb-2'
-              >
+              <label htmlFor='type' className='block text-gray-700 font-bold mb-2'>
                 Job Type
               </label>
               <select
@@ -91,10 +88,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
               />
             </div>
             <div className='mb-4'>
-              <label
-                htmlFor='description'
-                className='block text-gray-700 font-bold mb-2'
-              >
+              <label htmlFor='description' className='block text-gray-700 font-bold mb-2'>
                 Description
               </label>
               <textarea
@@ -109,10 +103,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
             </div>
 
             <div className='mb-4'>
-              <label
-                htmlFor='type'
-                className='block text-gray-700 font-bold mb-2'
-              >
+              <label htmlFor='salary' className='block text-gray-700 font-bold mb-2'>
                 Salary
               </label>
               <select
@@ -126,13 +117,13 @@ const EditJobPage = ({ updateJobSubmit }) => {
                 <option value='Under $50K'>Under $50K</option>
                 <option value='$50K - 60K'>$50K - $60K</option>
                 <option value='$60K - 70K'>$60K - $70K</option>
-                <option value='$70K - 80K'>$70K - $80K</option>
-                <option value='$80K - 90K'>$80K - $90K</option>
-                <option value='$90K - 100K'>$90K - $100K</option>
-                <option value='$100K - 125K'>$100K - $125K</option>
-                <option value='$125K - 150K'>$125K - $150K</option>
-                <option value='$150K - 175K'>$150K - $175K</option>
-                <option value='$175K - 200K'>$175K - $200K</option>
+                <option value='$70K - $80K'>$70K - $80K</option>
+                <option value='$80K - $90K'>$80K - $90K</option>
+                <option value='$90K - $100K'>$90K - $100K</option>
+                <option value='$100K - $125K'>$100K - $125K</option>
+                <option value='$125K - $150K'>$125K - $150K</option>
+                <option value='$150K - $175K'>$150K - $175K</option>
+                <option value='$175K - $200K'>$175K - $200K</option>
                 <option value='Over $200K'>Over $200K</option>
               </select>
             </div>
@@ -156,10 +147,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
             <h3 className='text-2xl mb-5'>Company Info</h3>
 
             <div className='mb-4'>
-              <label
-                htmlFor='company'
-                className='block text-gray-700 font-bold mb-2'
-              >
+              <label htmlFor='company' className='block text-gray-700 font-bold mb-2'>
                 Company Name
               </label>
               <input
@@ -174,10 +162,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
             </div>
 
             <div className='mb-4'>
-              <label
-                htmlFor='company_description'
-                className='block text-gray-700 font-bold mb-2'
-              >
+              <label htmlFor='company_description' className='block text-gray-700 font-bold mb-2'>
                 Company Description
               </label>
               <textarea
@@ -192,10 +177,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
             </div>
 
             <div className='mb-4'>
-              <label
-                htmlFor='contact_email'
-                className='block text-gray-700 font-bold mb-2'
-              >
+              <label htmlFor='contact_email' className='block text-gray-700 font-bold mb-2'>
                 Contact Email
               </label>
               <input
@@ -210,10 +192,7 @@ const EditJobPage = ({ updateJobSubmit }) => {
               />
             </div>
             <div className='mb-4'>
-              <label
-                htmlFor='contact_phone'
-                className='block text-gray-700 font-bold mb-2'
-              >
+              <label htmlFor='contact_phone' className='block text-gray-700 font-bold mb-2'>
                 Contact Phone
               </label>
               <input
@@ -241,4 +220,6 @@ const EditJobPage = ({ updateJobSubmit }) => {
     </section>
   );
 };
+
 export default EditJobPage;
+
