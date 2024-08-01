@@ -7,6 +7,7 @@ const JobListings = ({ isHome = false }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -15,8 +16,14 @@ const JobListings = ({ isHome = false }) => {
         : `https://backendjoblistingwebsite.onrender.com/api/jobs?_page=${page}`;
 
       try {
+        setLoading(true);
         const { data } = await axios.get(apiUrl);
-        setJobs(prevJobs => [...prevJobs, ...data]); // Append new jobs
+
+        if (data.length === 0) {
+          setHasMore(false); // No more jobs to load
+        } else {
+          setJobs(prevJobs => [...prevJobs, ...data]);
+        }
       } catch (error) {
         console.log('Error fetching data', error);
       } finally {
@@ -34,29 +41,9 @@ const JobListings = ({ isHome = false }) => {
           {isHome ? 'Recent Jobs' : 'Browse Jobs'}
         </h2>
 
-        {loading ? (
-          <Spinner loading={loading} />
-        ) : (
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
-            {jobs.map((job) => (
-              <JobListing key={job._id} job={job} />
-            ))}
-          </div>
-        )}
-        {!loading && (
-          <div className="text-center mt-6">
-            <button
-              className="bg-indigo-500 text-white px-4 py-2 rounded"
-              onClick={() => setPage(prevPage => prevPage + 1)}
-              disabled={loading}
-            >
-              Load More
-            </button>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-};
-
-export default JobListings;
+        {loading && <Spinner loading={loading} />}
+        
+        <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+          {jobs.map((job) => (
+            <JobListing key={job._id} job={job} />
+          ))}
