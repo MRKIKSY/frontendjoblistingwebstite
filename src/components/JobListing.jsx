@@ -1,52 +1,62 @@
-import { useState } from 'react';
-import { FaMapMarker } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import axios from 'axios';
+import JobListing from './JobListing';
+import Spinner from './Spinner';
 
-const JobListing = ({ job }) => {
-  const [showFullDescription, setShowFullDescription] = useState(false);
+const JobListings = ({ isHome = false }) => {
+  const [jobs, setJobs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
-  let description = job.description;
+  useEffect(() => {
+    const fetchJobs = async () => {
+      const apiUrl = isHome 
+        ? https://backendjoblistingwebsite.onrender.com/api/jobs?_limit=3&_page=${page}
+        : https://backendjoblistingwebsite.onrender.com/api/jobs?_page=${page};
 
-  if (!showFullDescription) {
-    description = description.substring(0, 90) + '...';
-  }
+      try {
+        const { data } = await axios.get(apiUrl);
+        setJobs(prevJobs => [...prevJobs, ...data]); // Append new jobs
+      } catch (error) {
+        console.log('Error fetching data', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, [isHome, page]);
 
   return (
-    <div className='bg-white rounded-xl shadow-md relative'>
-      <div className='p-4'>
-        <div className='mb-6'>
-          <div className='text-gray-600 my-2'>{job.type}</div>
-          <h3 className='text-xl font-bold'>{job.title}</h3>
-        </div>
+    <section className='bg-blue-50 px-4 py-10'>
+      <div className='container-xl lg:container m-auto'>
+        <h2 className='text-3xl font-bold text-indigo-500 mb-6 text-center'>
+          {isHome ? 'Recent Jobs' : 'Browse Jobs'}
+        </h2>
 
-        <div className='mb-5'>{description}</div>
-
-        <button
-          onClick={() => setShowFullDescription((prevState) => !prevState)}
-          className='text-indigo-500 mb-5 hover:text-indigo-600'
-        >
-          {showFullDescription ? 'Less' : 'More'}
-        </button>
-
-        <h3 className='text-indigo-500 mb-2'>{job.salary} / Year</h3>
-
-        <div className='border border-gray-100 mb-5'></div>
-
-        <div className='flex flex-col lg:flex-row justify-between mb-4'>
-          <div className='text-orange-700 mb-3'>
-            <FaMapMarker className='inline text-lg mb-1 mr-1' />
-            {job.location}
+        {loading ? (
+          <Spinner loading={loading} />
+        ) : (
+          <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
+            {jobs.map((job) => (
+              <JobListing key={job._id} job={job} />
+            ))}
           </div>
-          <Link
-            to={`/jobs/${job._id}`}
-            className='h-[36px] bg-indigo-500 hover:bg-indigo-600 text-white px-4 py-2 rounded-lg text-center text-sm'
-          >
-            Read More
-          </Link>
-        </div>
+        )}
+        {!loading && (
+          <div className="text-center mt-6">
+            <button
+              className="bg-indigo-500 text-white px-4 py-2 rounded"
+              onClick={() => setPage(prevPage => prevPage + 1)}
+              disabled={loading}
+            >
+              Load More
+            </button>
+          </div>
+        )}
       </div>
-    </div>
+    </section>
   );
 };
 
-export default JobListing;
+export default JobListings;
