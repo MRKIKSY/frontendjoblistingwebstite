@@ -6,14 +6,17 @@ import Spinner from './Spinner';
 const JobListings = ({ isHome = false }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const apiUrl = isHome ? 'https://backendjoblistingwebsite.onrender.com/api/jobs?_limit=3' : 'https://backendjoblistingwebsite.onrender.com/api/jobs';
+      const apiUrl = isHome 
+        ? `https://backendjoblistingwebsite.onrender.com/api/jobs?_limit=3&_page=${page}`
+        : `https://backendjoblistingwebsite.onrender.com/api/jobs?_page=${page}`;
 
       try {
         const { data } = await axios.get(apiUrl);
-        setJobs(data);
+        setJobs(prevJobs => [...prevJobs, ...data]); // Append new jobs
       } catch (error) {
         console.log('Error fetching data', error);
       } finally {
@@ -22,7 +25,7 @@ const JobListings = ({ isHome = false }) => {
     };
 
     fetchJobs();
-  }, [isHome]);
+  }, [isHome, page]);
 
   return (
     <section className='bg-blue-50 px-4 py-10'>
@@ -38,6 +41,17 @@ const JobListings = ({ isHome = false }) => {
             {jobs.map((job) => (
               <JobListing key={job._id} job={job} />
             ))}
+          </div>
+        )}
+        {!loading && (
+          <div className="text-center mt-6">
+            <button
+              className="bg-indigo-500 text-white px-4 py-2 rounded"
+              onClick={() => setPage(prevPage => prevPage + 1)}
+              disabled={loading}
+            >
+              Load More
+            </button>
           </div>
         )}
       </div>
