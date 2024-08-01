@@ -11,8 +11,8 @@ const JobListings = ({ isHome = false }) => {
   useEffect(() => {
     const fetchJobs = async () => {
       const apiUrl = isHome 
-        ? https://backendjoblistingwebsite.onrender.com/api/jobs?_limit=3&_page=${page}
-        : https://backendjoblistingwebsite.onrender.com/api/jobs?_page=${page};
+        ? `https://backendjoblistingwebsite.onrender.com/api/jobs?_limit=3&_page=${page}`
+        : `https://backendjoblistingwebsite.onrender.com/api/jobs?_page=${page}`;
 
       try {
         const { data } = await axios.get(apiUrl);
