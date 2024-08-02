@@ -8,7 +8,9 @@ const JobListings = ({ isHome = false }) => {
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const apiUrl = isHome ? '/api/jobs?_limit=3' : '/api/jobs';
+      const apiUrl = isHome
+        ? 'https://backendjoblistingwebsite.onrender.com/api/jobs?_limit=3'
+        : 'https://backendjoblistingwebsite.onrender.com/api/jobs';
       try {
         const res = await fetch(apiUrl);
         const data = await res.json();
@@ -21,7 +23,7 @@ const JobListings = ({ isHome = false }) => {
     };
 
     fetchJobs();
-  }, []);
+  }, [isHome]);
 
   return (
     <section className='bg-blue-50 px-4 py-10'>
@@ -43,4 +45,5 @@ const JobListings = ({ isHome = false }) => {
     </section>
   );
 };
+
 export default JobListings;
