@@ -1,22 +1,18 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import JobListing from './JobListing';
 import Spinner from './Spinner';
 
 const JobListings = ({ isHome = false }) => {
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchJobs = async () => {
-      const apiUrl = isHome 
-        ? `https://backendjoblistingwebsite.onrender.com/api/jobs?_limit=3&_page=${page}`
-        : `https://backendjoblistingwebsite.onrender.com/api/jobs?_page=${page}`;
-
+      const apiUrl = isHome ? '/api/jobs?_limit=3' : '/api/jobs';
       try {
-        const { data } = await axios.get(apiUrl);
-        setJobs(prevJobs => [...prevJobs, ...data]); // Append new jobs
+        const res = await fetch(apiUrl);
+        const data = await res.json();
+        setJobs(data);
       } catch (error) {
         console.log('Error fetching data', error);
       } finally {
@@ -25,7 +21,7 @@ const JobListings = ({ isHome = false }) => {
     };
 
     fetchJobs();
-  }, [isHome, page]);
+  }, []);
 
   return (
     <section className='bg-blue-50 px-4 py-10'>
@@ -39,24 +35,12 @@ const JobListings = ({ isHome = false }) => {
         ) : (
           <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
             {jobs.map((job) => (
-              <JobListing key={job._id} job={job} />
+              <JobListing key={job.id} job={job} />
             ))}
-          </div>
-        )}
-        {!loading && (
-          <div className="text-center mt-6">
-            <button
-              className="bg-indigo-500 text-white px-4 py-2 rounded"
-              onClick={() => setPage(prevPage => prevPage + 1)}
-              disabled={loading}
-            >
-              Load More
-            </button>
           </div>
         )}
       </div>
     </section>
   );
 };
-
 export default JobListings;
